@@ -31,7 +31,8 @@
     <style>
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* 3 columns */
+            aspect-ratio: 7 / 8; /* 7/8 aspect ratio */
             gap: 20px;
             padding: 20px;
         }
@@ -103,15 +104,9 @@
             text-align: center;
         }
 
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 columns */
-            aspect-ratio: 7 / 8; /* 7/8 aspect ratio */
-        }
-
-        @media (max-width: 900px) { /* Adjust for smaller screens */
-            .image-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+        @media (min-width: 900px) { /* Adjust for smaller screens */
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>

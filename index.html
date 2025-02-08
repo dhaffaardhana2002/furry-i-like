@@ -14,7 +14,6 @@
             <input type="text" id="githubToken" placeholder="Enter GitHub token">
             <button onclick="loadImages()">Load Images</button>
             <input type="file" id="imageFile" accept="image/*">
-            <input type="text" id="imageName" placeholder="Enter image file name">
             <button onclick="uploadImage()">Add Image</button>
         </div>
     </header>
@@ -202,9 +201,7 @@
         async function uploadImage() {
             const token = document.getElementById('githubToken').value;
             const fileInput = document.getElementById('imageFile');
-            const fileNameInput = document.getElementById('imageName');
             const file = fileInput.files[0];
-            const fileName = fileNameInput.value || file.name;
 
             if (!token) {
                 alert('Please enter a GitHub token');
@@ -216,17 +213,12 @@
                 return;
             }
 
-            if (!fileName) {
-                alert('Please enter a file name or use the original name');
-                return;
-            }
-
             try {
                 const reader = new FileReader();
                 reader.onloadend = async () => {
                     const base64data = reader.result.split(',')[1]; // Get base64 data
 
-                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${fileName}`, {
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${file.name}`, {
                         method: 'PUT',
                         headers: {
                             'Authorization': `token ${token}`,
@@ -234,7 +226,7 @@
                             'Accept': 'application/vnd.github.v3+json'
                         },
                         body: JSON.stringify({
-                            message: `Add ${fileName}`,
+                            message: `Add ${file.name}`,
                             content: base64data,
                             branch: 'master'  // Use 'master' branch
                         })
@@ -244,7 +236,7 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    alert(`Successfully uploaded ${fileName}`);
+                    alert(`Successfully uploaded ${file.name}`);
                     loadImages(); // Reload images after upload
                 };
 

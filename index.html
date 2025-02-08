@@ -163,7 +163,7 @@
                     // Get file SHA first
                     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${fileName}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `token ${token}`
                         }
                     });
                     const fileData = await response.json();
@@ -172,7 +172,7 @@
                     const deleteResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${fileName}`, {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
+                            'Authorization': `token ${token}`,
                             'Content-Type': 'application/json',
                             'Accept': 'application/vnd.github.v3+json'
                         },

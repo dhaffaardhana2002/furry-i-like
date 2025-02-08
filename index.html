@@ -13,7 +13,8 @@
         <div class="controls">
             <input type="text" id="githubToken" placeholder="Enter GitHub token">
             <button onclick="loadImages()">Load Images</button>
-            <input type="file" id="imageFile" accept="image/*">
+            <input type="file" id="imageFile" accept="image/*" onchange="updateFileName()">
+            <input type="text" id="fileNameInput" placeholder="Enter file name" />
             <button onclick="uploadImage()">Add Image</button>
         </div>
     </header>
@@ -120,6 +121,20 @@
         const repo = 'furry-i-like';
         const path = 'img';  // Your images folder path
 
+        let fileExtension = '';
+
+        function updateFileName() {
+            const fileInput = document.getElementById('imageFile');
+            const fileNameInput = document.getElementById('fileNameInput');
+            
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                fileExtension = fileName.split('.').pop(); // Get the file extension
+                const nameWithoutExtension = fileName.replace(`.${fileExtension}`, ''); // Remove extension
+                fileNameInput.value = nameWithoutExtension; // Set input value without extension
+            }
+        }
+
         async function loadImages() {
             const token = document.getElementById('githubToken').value;
             if (!token) {
@@ -210,17 +225,18 @@
             }
         }
 
-        async function uploadImage() {
-            const token = document.getElementById('githubToken').value;
+        function uploadImage() {
             const fileInput = document.getElementById('imageFile');
-            const file = fileInput.files[0];
-
+            const fileNameInput = document.getElementById('fileNameInput');
+            const newFileName = `${fileNameInput.value}.${fileExtension}`; // Combine new name with extension
+            
+            const token = document.getElementById('githubToken').value;
             if (!token) {
                 alert('Please enter a GitHub token');
                 return;
             }
 
-            if (!file) {
+            if (!fileInput.files.length > 0) {
                 alert('Please select an image file to upload');
                 return;
             }
@@ -230,7 +246,7 @@
                 reader.onloadend = async () => {
                     const base64data = reader.result.split(',')[1]; // Get base64 data
 
-                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${file.name}`, {
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}/${newFileName}`, {
                         method: 'PUT',
                         headers: {
                             'Authorization': `token ${token}`,
@@ -238,7 +254,7 @@
                             'Accept': 'application/vnd.github.v3+json'
                         },
                         body: JSON.stringify({
-                            message: `Add ${file.name}`,
+                            message: `Add ${newFileName}`,
                             content: base64data,
                             branch: 'master'  // Use 'master' branch
                         })
@@ -248,11 +264,11 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    alert(`Successfully uploaded ${file.name}`);
+                    alert(`Successfully uploaded ${newFileName}`);
                     loadImages(); // Reload images after upload
                 };
 
-                reader.readAsDataURL(file); // Read the file as a data URL
+                reader.readAsDataURL(fileInput.files[0]); // Read the file as a data URL
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error uploading image: ' + error.message);

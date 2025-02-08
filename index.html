@@ -15,6 +15,7 @@
             <button onclick="loadImages()">Load Images</button>
             <input type="file" id="imageFile" accept="image/*" onchange="updateFileName()">
             <input type="text" id="fileNameInput" placeholder="Enter file name" />
+            <span id="format-file"></span>
             <button onclick="uploadImage()">Add Image</button>
         </div>
     </header>
@@ -104,7 +105,7 @@
             text-align: center;
         }
 
-        @media (min-width: 900px) { /* Adjust for smaller screens */
+        @media (max-width: 900px) { /* Adjust for smaller screens */
             .gallery-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -115,8 +116,9 @@
         const owner = 'dhaffaardhana2002';
         const repo = 'furry-i-like';
         const path = 'img';  // Your images folder path
-
         let fileExtension = '';
+
+        const formatFile = document.getElementById('format-file');
 
         function updateFileName() {
             const fileInput = document.getElementById('imageFile');
@@ -127,6 +129,7 @@
                 fileExtension = fileName.split('.').pop(); // Get the file extension
                 const nameWithoutExtension = fileName.replace(`.${fileExtension}`, ''); // Remove extension
                 fileNameInput.value = nameWithoutExtension; // Set input value without extension
+                formatFile.innerText = '.'+fileExtension; // Update the formatFile inner text with the file extension
             }
         }
 
@@ -261,6 +264,10 @@
 
                     alert(`Successfully uploaded ${newFileName}`);
                     loadImages(); // Reload images after upload
+
+                    // Clear the fileNameInput and format-file text
+                    fileNameInput.value = ''; // Clear the file name input
+                    formatFile.innerText = ''; // Clear the format file text
                 };
 
                 reader.readAsDataURL(fileInput.files[0]); // Read the file as a data URL

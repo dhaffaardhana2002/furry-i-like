@@ -167,7 +167,7 @@
                         clone.id = '';
                         clone.querySelector('img').src = file.download_url;
                         clone.querySelector('img').alt = file.name;
-                        clone.querySelector('span').textContent = file.name;
+                        clone.querySelector('span').textContent = (file.name).split('.').slice(0, -1).join('.');
                         gallery.appendChild(clone);
                     }
                 });
